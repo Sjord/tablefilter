@@ -15,18 +15,24 @@
         return rowMatches;
     }
 
-    // only show rows that match the input boxes
-    function filterTable(table) {
-        let rows = table.getElementsByTagName('tr');
-        let firstRow = rows[0];
-        let filterInputs = firstRow.getElementsByTagName('input');
+    // get the string contents of the filter input fields
+    function getFilterValues(filterRow) {
+        let filterInputs = filterRow.getElementsByTagName('input');
 
         let filterValues = [];
         for (let input of filterInputs) {
             filterValues.push(input.value);
         }
+        return filterValues;
+    }
 
-        for (let i = 1; i < rows.length; i++) {
+    // only show rows that match the input boxes
+    function filterTable(table, filterRow) {
+        let filterValues = getFilterValues(filterRow);
+
+        let tbody = table.getElementsByTagName('tbody')[0];
+        let rows = tbody.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
             if (isMatchingRow(row, filterValues)) {
                 row.style.display = '';
@@ -47,12 +53,13 @@
             let filterCell = document.createElement('td');
             let filterInput = document.createElement('input');
             filterInput.addEventListener("keyup", function () {
-                filterTable(table);
+                filterTable(table, filterRow);
             });
             filterCell.appendChild(filterInput);
             filterRow.appendChild(filterCell);
         }
-        table.insertBefore(filterRow, table.firstChild);
+        let thead = table.getElementsByTagName('thead')[0];
+        thead.appendChild(filterRow);
     }
 
     let tables = document.getElementsByTagName("table");
