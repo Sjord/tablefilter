@@ -1,12 +1,57 @@
 "use strict";
 
-function decorateTable(table) {
-  let rows = table.getElementByTagName('tr');
-  let firstRow = rows[0];
-  let firstCells = firstRow.getElementsByTagName('td');
-}
+(function () {
+    // only show rows that match the input boxes
+    function filterTable(table) {
+        let rows = table.getElementsByTagName('tr');
+        let firstRow = rows[0];
+        let filterInputs = firstRow.getElementsByTagName('input');
 
-let tables = document.getElementsByTagName("table");
-for (var table of tables) {
-  decorateTable(table);
-}
+        let filterValues = [];
+        for (let input of filterInputs) {
+            filterValues.push(input.value);
+        }
+
+        for (let i = 1; i < rows.length; i++) {
+            let row = rows[i];
+            let cells = row.children;
+            let rowMatches = true;
+            for (let c = 0; c < Math.min(filterInputs.length, cells.length); c++) {
+                let cell = cells[c];
+                let filterValue = filterValues[c];
+                let cellContent = cell.innerText;
+                rowMatches &= cellContent.includes(filterValue);
+            }
+
+            if (rowMatches) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    // add a row with an input box for each column
+    function decorateTable(table) {
+        let rows = table.getElementsByTagName('tr');
+        let firstRow = rows[0];
+        let firstCells = firstRow.children;
+
+        let filterRow = document.createElement('tr');
+        for (let i = 0; i < firstCells.length; i++) {
+            let filterCell = document.createElement('td');
+            let filterInput = document.createElement('input');
+            filterInput.addEventListener("keyup", function () {
+                filterTable(table);
+            });
+            filterCell.appendChild(filterInput);
+            filterRow.appendChild(filterCell);
+        }
+        table.insertBefore(filterRow, table.firstChild);
+    }
+
+    let tables = document.getElementsByTagName("table");
+    for (var table of tables) {
+        decorateTable(table);
+    }
+})();
