@@ -1,6 +1,20 @@
 "use strict";
 
 (function () {
+
+    // do the cells in `row` contain the strings in `filterValues`?
+    function isMatchingRow(row, filterValues) {
+        let cells = row.children;
+        let rowMatches = true;
+        for (let c = 0; c < Math.min(filterValues.length, cells.length); c++) {
+            let cell = cells[c];
+            let filterValue = filterValues[c];
+            let cellContent = cell.innerText;
+            rowMatches &= cellContent.includes(filterValue);
+        }
+        return rowMatches;
+    }
+
     // only show rows that match the input boxes
     function filterTable(table) {
         let rows = table.getElementsByTagName('tr');
@@ -14,16 +28,7 @@
 
         for (let i = 1; i < rows.length; i++) {
             let row = rows[i];
-            let cells = row.children;
-            let rowMatches = true;
-            for (let c = 0; c < Math.min(filterInputs.length, cells.length); c++) {
-                let cell = cells[c];
-                let filterValue = filterValues[c];
-                let cellContent = cell.innerText;
-                rowMatches &= cellContent.includes(filterValue);
-            }
-
-            if (rowMatches) {
+            if (isMatchingRow(row, filterValues)) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
