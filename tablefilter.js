@@ -42,6 +42,16 @@
         }
     }
 
+    // get first child element by tag name, or create it if it doesn't exist
+    function getOrCreate(parentElement, tagName) {
+        let childElement = parentElement.getElementsByTagName(tagName)[0];
+        if (childElement === undefined) {
+            childElement = document.createElement(tagName);
+            parentElement.insertBefore(childElement, parentElement.firstChild);
+        }
+        return childElement;
+    }
+
     // add a row with an input box for each column
     function decorateTable(table) {
         let rows = table.getElementsByTagName('tr');
@@ -58,7 +68,8 @@
             filterCell.appendChild(filterInput);
             filterRow.appendChild(filterCell);
         }
-        let thead = table.getElementsByTagName('thead')[0];
+
+        let thead = getOrCreate(table, 'thead');
         thead.appendChild(filterRow);
     }
 
