@@ -3,7 +3,7 @@
 
     "name": "Tablefilter",
     "description": "Filter tables",
-    "version": "0.1",
+    "version": "0.1.1",
 
     "page_action": {
         "default_icon": "filter.png",
