@@ -10,7 +10,7 @@
             let cell = cells[c];
             let filterValue = filterValues[c];
             let cellContent = cell.innerText;
-            rowMatches &= cellContent.includes(filterValue);
+            rowMatches &= cellContent.includes(filterValue) || cellContent.toUpperCase().includes(filterValue.toUpperCase());
         }
         return rowMatches;
     }
