@@ -10,7 +10,17 @@
             let cell = cells[c];
             let filterValue = filterValues[c];
             let cellContent = cell.innerText;
-            rowMatches &= cellContent.includes(filterValue) || cellContent.toUpperCase().includes(filterValue.toUpperCase());
+            // Allow negating filters with -Query
+            if (filterValue.charAt(0) == "-") {
+                filterValue = filterValue.substr(1);
+                rowMatches &= !cellContent.includes(filterValue) && !cellContent.toUpperCase().includes(filterValue.toUpperCase());
+            } else {
+		// Allow the escaping of negated filters with \-Query
+                if (filterValue.charAt(0) == "\\") {
+                    filterValue = filterValue.substr(1)
+                }
+                rowMatches &= cellContent.includes(filterValue) || cellContent.toUpperCase().includes(filterValue.toUpperCase());
+            }
         }
         return rowMatches;
     }
