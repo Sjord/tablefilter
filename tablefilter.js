@@ -2,25 +2,37 @@
 
 (function () {
 
-    // do the cells in `row` contain the strings in `filterValues`?
-    function isMatchingRow(row, filterValues) {
+    function parseFilterExpression(expr) {
+        let negate = false;
+        let term = expr;
+
+        if (term.charAt(0) === "-") {
+            // Allow negating filters with -Query
+            negate = true;
+            term = term.substr(1);
+        } else if (term.charAt(0) === "\\") {
+            // Allow the escaping of negated filters with \-Query
+            term = term.substr(1);
+        }
+        return {
+            term: term,
+            negate: negate
+        };
+    }
+
+    // do the cells in `row` match against the given `filters`?
+    function isMatchingRow(row, filters) {
         let cells = row.children;
         let rowMatches = true;
-        for (let c = 0; c < Math.min(filterValues.length, cells.length); c++) {
+        for (let c = 0; c < Math.min(filters.length, cells.length); c++) {
             let cell = cells[c];
-            let filterValue = filterValues[c];
+            let filter = filters[c];
             let cellContent = cell.innerText;
-            // Allow negating filters with -Query
-            if (filterValue.charAt(0) == "-") {
-                filterValue = filterValue.substr(1);
-                rowMatches &= !cellContent.includes(filterValue) && !cellContent.toUpperCase().includes(filterValue.toUpperCase());
-            } else {
-		// Allow the escaping of negated filters with \-Query
-                if (filterValue.charAt(0) == "\\") {
-                    filterValue = filterValue.substr(1)
-                }
-                rowMatches &= cellContent.includes(filterValue) || cellContent.toUpperCase().includes(filterValue.toUpperCase());
+            let cellMatches = cellContent.includes(filter.term) || cellContent.toUpperCase().includes(filter.term.toUpperCase());
+            if (filter.negate) {
+                cellMatches = !cellMatches;
             }
+            rowMatches &= cellMatches;
         }
         return rowMatches;
     }
@@ -39,12 +51,13 @@
     // only show rows that match the input boxes
     function filterTable(table, filterRow) {
         let filterValues = getFilterValues(filterRow);
+        let filters = filterValues.map(parseFilterExpression);
 
         let tbody = table.getElementsByTagName('tbody')[0];
         let rows = tbody.getElementsByTagName('tr');
         for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
-            if (isMatchingRow(row, filterValues)) {
+            if (isMatchingRow(row, filters)) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
