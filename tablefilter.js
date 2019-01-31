@@ -85,6 +85,7 @@
         for (let i = 0; i < firstCells.length; i++) {
             let filterCell = document.createElement('td');
             let filterInput = document.createElement('input');
+            filterInput.type = "search";
             filterInput.style.width = (firstCells[i].getBoundingClientRect()['width'] - 10) + 'px';
             filterInput.addEventListener("keyup", function () {
                 filterTable(table, filterRow);
