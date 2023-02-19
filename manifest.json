@@ -1,22 +1,24 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
 
     "name": "Tablefilter",
     "description": "Filter tables",
-    "version": "0.1.1",
+    "version": "3.0.0",
 
-    "page_action": {
+    "action": {
         "default_icon": "filter.png",
         "default_title": "Tablefilter"
     },
     "permissions": [
-        "https://*/",
-        "http://*/",
         "declarativeContent",
-        "activeTab"
+        "activeTab",
+        "scripting"
+    ],
+    "optional_host_permissions": [
+        "https://*/",
+        "http://*/"
     ],
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
+        "service_worker": "background.js"
     }
 }
