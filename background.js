@@ -1,4 +1,4 @@
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function(details) {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [
@@ -8,11 +8,14 @@ chrome.runtime.onInstalled.addListener(function() {
                 })
             ],
             // ... show the page action.
-            actions: [new chrome.declarativeContent.ShowPageAction() ]
+            actions: [new chrome.declarativeContent.ShowAction() ]
         }]);
     });
 });
 
-chrome.pageAction.onClicked.addListener(function (tab) {
-    chrome.tabs.executeScript({"file": "tablefilter.js"});
+chrome.action.onClicked.addListener(function (tab) {
+    chrome.scripting.executeScript({
+        files: ["tablefilter.js"],
+        target: {tabId: tab.id},
+    });
 });
